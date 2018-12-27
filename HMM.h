@@ -3,6 +3,7 @@
 #include <cstring>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 #include "GMM.h"
 namespace Orange{
     
@@ -37,8 +38,14 @@ public:
     GMM* getStateMode(int id);
 
     // core process
+    void zero();
+    void norm();
+    double logProb(double p);
     double calcProbability(std::vector<double*>& seq);
-    double decode();
+    double calcTransProb(int i,int j);
+    double decode(std::vector<double*>& vec, std::vector<int>& states);
+    void init(); 
+    void train();
 
 private:
     int stateNum;

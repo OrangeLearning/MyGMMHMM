@@ -74,23 +74,54 @@ void Orange::GMM::init_data(double** data, int N){
     kmeans -> cluster(data , N , label);
     
     int* count = new int[mixNum];
+    double* overmeans = new double[dimNum];
+
+    
     for(int i = 0;i < mixNum; i ++){
         prior[i] = double(count[i] = 0);
         memcpy(means[i] , kmeans -> getMeans(i),sizeof(double) * dimNum);
         memset(vars[i], 0 , sizeof(double) * dimNum);
     }
+    memset(overmeans , 0, sizeof(double) * dimNum);
     memset(minVars, 0 , sizeof(double) * dimNum);
 
     for(int i = 0 ;i < size ;i++) {
         int curLabel = label[i];
 
         count[curLabel] ++;
-        double* m = kmeans -> getMeans(curLabel);
+        double* curMeans = kmeans -> getMeans(curLabel);
 
         for(int d = 0;d < dimNum;d ++){
+            vars[curLabel][d] += (data[i][d] - curMeans[curLabel][d]) * (data[i][d] - curMeans[curLabel][d]);
+        }
 
+        for(int d = 0;d < dimNum;d ++){
+            overmeans[d] += data[curLabel][d];
+            minVars[d] += data[curLabel][d] * data[curLabel][d];
         }
     }
+
+    for(int d = 0;d < dimNum;d ++){
+        overmeans[d] /= double(size);
+        minVars[d] = max(MIN_VAR, 0.01 * (minVars[d]/ size - overmeans[d] * overmeans[d]));
+    }
+
+    for(int i = 0;i < mixNum;i ++){
+        prior[i] = double(count[i]) / size;
+
+        if(prior[i] > 0.0){
+            for(int d = 0;d < dimNum;d ++){
+
+            }
+        }
+        else{
+            
+        }
+    }
+    delete kmeans;
+    delete[] count;
+    delete[] overmeans;
+    delete[] label;
 }
 
 void Orange::GMM::train(double** data ,int N){
