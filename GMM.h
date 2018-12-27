@@ -13,7 +13,7 @@ public:
     const double gmm_pi = acos(-1.0);
 public:
     // constructor
-    GMM(int,int);
+    GMM(int _mixNum , int _dimNum);
     ~GMM();
     void Allocate();
     void Dispose();
